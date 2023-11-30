@@ -1,3 +1,4 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_project/route/route.dart' as route;
 
@@ -30,6 +31,61 @@ class _HomePageState extends State<HomePage> {
                 onPressed: null,
               ),
             ]),
+      ),
+      body: Column(
+        children: [
+          CarouselSlider(
+              options: CarouselOptions(
+                height: 280.0,
+                autoPlay: true,
+                autoPlayInterval: Duration(milliseconds: 1200),
+                autoPlayCurve: Curves.fastOutSlowIn,
+                enlargeCenterPage: true,
+                enlargeFactor: 0.3,
+              ),
+              items: [
+                Container(
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('assets/images/download.png'),
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('assets/images/business.jpg'),
+                      fit: BoxFit.fitHeight,
+                    ),
+                  ),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('assets/images/engineer.jpg'),
+                      fit: BoxFit.fitHeight,
+                    ),
+                  ),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('assets/images/nursing.jpg'),
+                      fit: BoxFit.fitHeight,
+                    ),
+                  ),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('assets/images/software.jpg'),
+                      fit: BoxFit.fitHeight,
+                    ),
+                  ),
+                ),
+              ]),
+        ],
       ),
       drawer: Drawer(),
       floatingActionButton: const FloatingActionButton(
