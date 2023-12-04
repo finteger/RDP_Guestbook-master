@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "941163283759",
+    "project_id": "rdpguestbook-master",
+    "storage_bucket": "rdpguestbook-master.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:941163283759:android:949252c03a293c0a658dda",
+        "android_client_info": {
+          "package_name": "com.example.flutter_project"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmp6lHFJoNys--QNNRuuCPSXflVfLCGrE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

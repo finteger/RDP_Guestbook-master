@@ -22,7 +22,10 @@ class _HomePageState extends State<HomePage> {
               FlutterLogo(size: 57),
               Text(
                 "RDP Guestbook",
-                style: TextStyle(color: Colors.white, fontSize: 21),
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 21,
+                    fontWeight: FontWeight.w500),
               ),
               SizedBox(width: 12),
               Icon(Icons.notifications),
@@ -38,7 +41,7 @@ class _HomePageState extends State<HomePage> {
               options: CarouselOptions(
                 height: 280.0,
                 autoPlay: true,
-                autoPlayInterval: Duration(milliseconds: 1200),
+                autoPlayInterval: Duration(milliseconds: 2200),
                 autoPlayCurve: Curves.fastOutSlowIn,
                 enlargeCenterPage: true,
                 enlargeFactor: 0.3,
