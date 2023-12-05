@@ -13,9 +13,7 @@ class AuthGate extends StatelessWidget {
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return SignInScreen(
-            providers: [
-              EmailAuthProvider(),
-            ],
+            providers: [EmailAuthProvider()],
             headerBuilder: (context, constraints, shrinkOffset) {
               return Padding(
                 padding: const EdgeInsets.all(20),
@@ -23,6 +21,16 @@ class AuthGate extends StatelessWidget {
                   aspectRatio: 1,
                   child: Image.asset('assets/images/flutter5786.jpg'),
                 ),
+              );
+            },
+            subtitleBuilder: (context, action) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: action == AuthAction.signIn
+                    ? const Text(
+                        'Welcome to the RDP Guestbook App, please sign in!')
+                    : const Text(
+                        'Welcome to the RDP Guestbook App, please sign in!'),
               );
             },
           );

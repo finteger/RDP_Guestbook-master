@@ -1,6 +1,8 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_project/route/route.dart' as route;
+import 'package:firebase_auth/firebase_auth.dart' hide EmailAuthProvider;
+import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -19,20 +21,19 @@ class _HomePageState extends State<HomePage> {
         title: const Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              FlutterLogo(size: 57),
               Text(
-                "RDP Guestbook",
+                "Guestbook",
                 style: TextStyle(
                     color: Colors.white,
                     fontSize: 21,
                     fontWeight: FontWeight.w500),
               ),
-              SizedBox(width: 12),
               Icon(Icons.notifications),
               IconButton(
                 icon: Icon(Icons.info),
                 onPressed: null,
               ),
+              SignOutButton(),
             ]),
       ),
       body: Column(
