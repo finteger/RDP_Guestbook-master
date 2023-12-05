@@ -28,7 +28,6 @@ class _HomePageState extends State<HomePage> {
                     fontSize: 21,
                     fontWeight: FontWeight.w500),
               ),
-              Icon(Icons.notifications),
               IconButton(
                 icon: Icon(Icons.info),
                 onPressed: null,
