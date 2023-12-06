@@ -1,4 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/services.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:flutter/material.dart';
 import 'package:flutter_project/route/route.dart' as route;
@@ -14,7 +15,27 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  //Ceate a Firestore instance
+  FirebaseFirestore db = FirebaseFirestore.instance;
+
   List<String> items = ["One", "Two", "Three"];
+
+  //Controller to capture user input for message
+  final myController1 = TextEditingController();
+  final myController2 = TextEditingController();
+
+  //Add a new guest post to the 'guests' collection
+  Future<void> addGuestPost() async {
+    db
+        .collection('guests')
+        .add({
+          'guest_name': myController1.text,
+          'message': myController2.text,
+          'created': DateTime.now(),
+        })
+        .then((value) => print("Guest & message added"))
+        .catchError((error) => print("Failed to add guest & message: $error"));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +60,7 @@ class _HomePageState extends State<HomePage> {
       ),
       body: Container(
         decoration: BoxDecoration(
-          color: Colors.blue,
+          color: Colors.black,
         ),
         child: Column(
           children: [
@@ -99,47 +120,95 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                 ]),
-            StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance
-                    .collection('guests')
-                    .orderBy('created', descending: true)
-                    .snapshots(),
-                builder: (BuildContext context,
-                    AsyncSnapshot<QuerySnapshot> snapshot) {
-                  if (snapshot.hasError) {
-                    return const Text('Oops, something went wrong');
-                  }
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator(
-                      color: Colors.red,
+            Padding(
+              padding: const EdgeInsets.all(13.0),
+              child: StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection('guests')
+                      .orderBy('created', descending: true)
+                      .snapshots(),
+                  //These are real-time snapshots of collections
+                  builder: (BuildContext context,
+                      AsyncSnapshot<QuerySnapshot> snapshot) {
+                    // Async snapshot data from the stream
+
+                    //Error handling if the db has an issue
+                    if (snapshot.hasError) {
+                      return const Text('Oops, something went wrong');
+                    }
+
+                    /*If the connectionState is equal to an enum (named lists), we are
+                      returning the progress indicator.  */
+
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return CircularProgressIndicator(
+                        color: Colors.red,
+                      );
+                    }
+
+                    //Returning UI
+                    return Scrollbar(
+                      thumbVisibility: true,
+                      thickness: 8,
+                      radius: Radius.circular(23),
+                      child: SizedBox(
+                        height: 474,
+                        child: ListView(
+                            scrollDirection: Axis.vertical,
+                            shrinkWrap: true,
+                            /*Dynamically displaying snapshot data (streaming documents) 
+                             and we call the data method with null assertion operator */
+                            children: snapshot.data!.docs
+                                .map((DocumentSnapshot document) {
+                              Map<String, dynamic> data =
+                                  document.data()! as Map<String, dynamic>;
+
+                              final firestoreTimestamp =
+                                  data['created'] as Timestamp;
+                              final dateTime = firestoreTimestamp.toDate();
+                              final timeAgo =
+                                  timeago.format(dateTime, locale: 'en_short');
+
+                              return ListTile(
+                                leading: Text(
+                                  '➢' + ' ' + data['guest_name'],
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w900,
+                                    fontSize: 18,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                title: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      data['message'],
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        background: Paint()
+                                          ..color = Colors.blue
+                                          ..strokeWidth = 30
+                                          ..style = PaintingStyle.stroke
+                                          ..strokeJoin = StrokeJoin.round
+                                          ..strokeCap = StrokeCap.round,
+                                      ),
+                                    ),
+                                    Icon(Icons.format_quote,
+                                        color: Colors.yellow),
+                                  ],
+                                ),
+                                trailing: Text(
+                                  timeAgo,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              );
+                            }).toList()),
+                      ),
                     );
-                  }
-
-                  return ListView(
-                      scrollDirection: Axis.vertical,
-                      shrinkWrap: true,
-                      children:
-                          snapshot.data!.docs.map((DocumentSnapshot document) {
-                        Map<String, dynamic> data =
-                            document.data()! as Map<String, dynamic>;
-
-                        final firestoreTimestamp = data['created'] as Timestamp;
-                        final dateTime = firestoreTimestamp.toDate();
-                        final timeAgo =
-                            timeago.format(dateTime, locale: 'en_short');
-
-                        return ListTile(
-                          leading: Text('↪' + ' ' + data['guest_name']),
-                          title: Text(data['message']),
-                          trailing: Text(
-                            timeAgo,
-                            style: TextStyle(
-                              color: Colors.white,
-                            ),
-                          ),
-                        );
-                      }).toList());
-                })
+                  }),
+            )
           ],
         ),
       ),
@@ -165,31 +234,70 @@ class _HomePageState extends State<HomePage> {
                       Text('Leave a Message'),
                     ],
                   ),
-                  content: SingleChildScrollView(
-                    child: Column(children: <Widget>[
-                      TextFormField(),
-                    ]),
+                  content: Form(
+                    child: SingleChildScrollView(
+                      child: Column(children: <Widget>[
+                        TextFormField(
+                          inputFormatters: [
+                            new LengthLimitingTextInputFormatter(9)
+                          ],
+                          controller: myController1,
+                          decoration: InputDecoration(
+                            labelText: 'First Name',
+                            icon: Icon(Icons.account_box),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 50,
+                        ),
+                        TextFormField(
+                          inputFormatters: [
+                            new LengthLimitingTextInputFormatter(18)
+                          ],
+                          maxLines: 8,
+                          controller: myController2,
+                          decoration: InputDecoration(
+                            labelText: 'Message',
+                            icon: Icon(Icons.message),
+                            border: OutlineInputBorder(
+                              borderSide: new BorderSide(color: Colors.teal),
+                            ),
+                          ),
+                        ),
+                      ]),
+                    ),
                   ),
+                  actions: [
+                    ElevatedButton(
+                      onPressed: () {
+                        addGuestPost();
+                        Navigator.pop(context);
+                      },
+                      child: Text('Submit'),
+                    )
+                  ],
                 );
               });
         },
       ),
       bottomNavigationBar: BottomNavigationBar(
+          backgroundColor: Colors.blue,
           currentIndex: 0,
           items: const [
             BottomNavigationBarItem(
-              icon: Icon(Icons.home),
+              icon: Icon(Icons.home, color: Colors.white),
               label: 'Home',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.email),
+              icon: Icon(Icons.email, color: Colors.white),
               label: 'Contact Us',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.person),
+              icon: Icon(Icons.person, color: Colors.white),
               label: 'About Us',
             ),
           ],
+          //zero-based index.  buttons match the case and return a named route when pressed.
           onTap: (int index) {
             switch (index) {
               case 0:
