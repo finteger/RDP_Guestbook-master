@@ -41,7 +41,7 @@ dependencies:
   firebase_auth: ^4.15.0
   firebase_ui_auth: ^1.4.0
   timeago: ^3.3.0
-  intl: ^0.17.0
+  intl: 0.18.1
 
 dev_dependencies:
   flutter_test:
