@@ -160,6 +160,8 @@ class _HomePageState extends State<HomePage> {
                              and we call the data method with null assertion operator */
                             children: snapshot.data!.docs
                                 .map((DocumentSnapshot document) {
+                              /*Data is turned as a Map with key-value pair in mind.  Key is always String, and
+                          the value will always be dynamic, denoting any sort of data type */
                               Map<String, dynamic> data =
                                   document.data()! as Map<String, dynamic>;
 
