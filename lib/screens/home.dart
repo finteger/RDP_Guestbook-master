@@ -39,6 +39,11 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    double sizeHeight = MediaQuery.of(context).size.height;
+    double sizeWidth = MediaQuery.of(context).size.width;
+
+    double dynamicHeight = sizeHeight < 800 ? 200 : 450;
+
     return Scaffold(
       appBar: AppBar(
         title: const Row(
@@ -64,62 +69,63 @@ class _HomePageState extends State<HomePage> {
         ),
         child: Column(
           children: [
-            CarouselSlider(
-                options: CarouselOptions(
-                  height: 230.0,
-                  autoPlay: true,
-                  autoPlayInterval: Duration(milliseconds: 2200),
-                  autoPlayCurve: Curves.fastOutSlowIn,
-                  enlargeCenterPage: true,
-                  enlargeFactor: 0.3,
-                ),
-                items: [
-                  Container(
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage('assets/images/download.png'),
-                        fit: BoxFit.cover,
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+            if (sizeHeight > 800)
+              CarouselSlider(
+                  options: CarouselOptions(
+                    height: 230.0,
+                    autoPlay: true,
+                    autoPlayInterval: Duration(milliseconds: 2200),
+                    autoPlayCurve: Curves.fastOutSlowIn,
+                    enlargeCenterPage: true,
+                    enlargeFactor: 0.3,
                   ),
-                  Container(
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage('assets/images/business.jpg'),
-                        fit: BoxFit.cover,
+                  items: [
+                    Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage('assets/images/download.png'),
+                          fit: BoxFit.cover,
+                        ),
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                      borderRadius: BorderRadius.circular(12),
                     ),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage('assets/images/engineer.jpg'),
-                        fit: BoxFit.cover,
+                    Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage('assets/images/business.jpg'),
+                          fit: BoxFit.cover,
+                        ),
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                      borderRadius: BorderRadius.circular(12),
                     ),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage('assets/images/nursing.jpg'),
-                        fit: BoxFit.cover,
+                    Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage('assets/images/engineer.jpg'),
+                          fit: BoxFit.cover,
+                        ),
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                      borderRadius: BorderRadius.circular(12),
                     ),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage('assets/images/software.jpg'),
-                        fit: BoxFit.cover,
+                    Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage('assets/images/nursing.jpg'),
+                          fit: BoxFit.cover,
+                        ),
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                      borderRadius: BorderRadius.circular(12),
                     ),
-                  ),
-                ]),
+                    Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage('assets/images/software.jpg'),
+                          fit: BoxFit.cover,
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ]),
             Padding(
               padding: const EdgeInsets.all(13.0),
               child: StreamBuilder<QuerySnapshot>(
@@ -147,66 +153,95 @@ class _HomePageState extends State<HomePage> {
                     }
 
                     //Returning UI
-                    return Scrollbar(
-                      thumbVisibility: true,
-                      thickness: 8,
-                      radius: Radius.circular(23),
-                      child: SizedBox(
-                        height: 474,
-                        child: ListView(
-                            scrollDirection: Axis.vertical,
-                            shrinkWrap: true,
-                            /*Dynamically displaying snapshot data (streaming documents) 
-                             and we call the data method with null assertion operator */
-                            children: snapshot.data!.docs
-                                .map((DocumentSnapshot document) {
-                              /*Data is turned as a Map with key-value pair in mind.  Key is always String, and
-                          the value will always be dynamic, denoting any sort of data type */
-                              Map<String, dynamic> data =
-                                  document.data()! as Map<String, dynamic>;
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: Colors.blue.withOpacity(.5),
+                        border: Border.all(
+                          color: Colors.yellow,
+                        ),
+                        borderRadius: BorderRadius.circular(15),
+                        boxShadow: [
+                          BoxShadow(
+                              color: Colors.blue.withOpacity(.3),
+                              spreadRadius: 15,
+                              blurRadius: 57,
+                              offset: Offset(0, -137)),
+                        ],
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(9.0),
+                        child: Scrollbar(
+                          thumbVisibility: true,
+                          thickness: 8,
+                          radius: Radius.circular(23),
+                          child: SizedBox(
+                            height: dynamicHeight,
+                            child: ListView(
+                                scrollDirection: Axis.vertical,
+                                shrinkWrap: true,
+                                /*Dynamically displaying snapshot data (streaming documents) 
+                                 and we call the data method with null assertion operator */
+                                children: snapshot.data!.docs
+                                    .map((DocumentSnapshot document) {
+                                  /*Data is turned as a Map with key-value pair in mind.  Key is always String, and
+                              the value will always be dynamic, denoting any sort of data type */
+                                  Map<String, dynamic> data =
+                                      document.data()! as Map<String, dynamic>;
 
-                              final firestoreTimestamp =
-                                  data['created'] as Timestamp;
-                              final dateTime = firestoreTimestamp.toDate();
-                              final timeAgo =
-                                  timeago.format(dateTime, locale: 'en_short');
+                                  final firestoreTimestamp =
+                                      data['created'] as Timestamp;
+                                  final dateTime = firestoreTimestamp.toDate();
+                                  final timeAgo = timeago.format(dateTime,
+                                      locale: 'en_short');
 
-                              return ListTile(
-                                leading: Text(
-                                  '➢' + ' ' + data['guest_name'],
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w900,
-                                    fontSize: 18,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                title: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Text(
-                                      data['message'],
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        background: Paint()
-                                          ..color = Colors.blue
-                                          ..strokeWidth = 30
-                                          ..style = PaintingStyle.stroke
-                                          ..strokeJoin = StrokeJoin.round
-                                          ..strokeCap = StrokeCap.round,
+                                  return ListTile(
+                                    leading: SizedBox(
+                                      width: 50,
+                                      child: Column(
+                                        children: [
+                                          Icon(
+                                            Icons.account_circle,
+                                            size: 33,
+                                            color: Colors.grey,
+                                          ),
+                                          Text(
+                                            data['guest_name'],
+                                            style: TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.white),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                    Icon(Icons.format_quote,
-                                        color: Colors.yellow),
-                                  ],
-                                ),
-                                trailing: Text(
-                                  timeAgo,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              );
-                            }).toList()),
+                                    title: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        Text(
+                                          data['message'],
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            background: Paint()
+                                              ..color = Colors.blue
+                                              ..strokeWidth = 30
+                                              ..style = PaintingStyle.stroke
+                                              ..strokeJoin = StrokeJoin.round
+                                              ..strokeCap = StrokeCap.round,
+                                          ),
+                                        ),
+                                        Icon(Icons.format_quote,
+                                            color: Colors.yellow),
+                                      ],
+                                    ),
+                                    trailing: Text(
+                                      timeAgo,
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  );
+                                }).toList()),
+                          ),
+                        ),
                       ),
                     );
                   }),
@@ -256,7 +291,7 @@ class _HomePageState extends State<HomePage> {
                           inputFormatters: [
                             new LengthLimitingTextInputFormatter(18)
                           ],
-                          maxLines: 8,
+                          maxLines: 1,
                           controller: myController2,
                           decoration: InputDecoration(
                             labelText: 'Message',
@@ -284,6 +319,7 @@ class _HomePageState extends State<HomePage> {
       ),
       bottomNavigationBar: BottomNavigationBar(
           backgroundColor: Colors.blue,
+          fixedColor: Colors.white,
           currentIndex: 0,
           items: const [
             BottomNavigationBarItem(
